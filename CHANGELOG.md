@@ -2,7 +2,7 @@
 
 All notable changes to Retouch are recorded here.
 
-## [Unreleased]
+## [0.3.0] - 2026-09-25
 
 ### Added
 
