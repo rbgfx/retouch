@@ -1,0 +1,35 @@
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.1
+  SuggestExtensions: false
+  CacheRootDirectory: tmp/rubocop-cache
+  Exclude:
+    - vendor/**/*
+    - tmp/**/*
+
+Layout/LineLength:
+  Max: 300
+
+Metrics:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  Enabled: false
+
+Style/Attr:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false
