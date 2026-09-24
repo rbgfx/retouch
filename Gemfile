@@ -4,6 +4,9 @@ source "https://rubygems.org"
 
 gemspec
 
+# RuboCop's open-ended dependency otherwise selects parallel 2.2, which drops Ruby 3.1.
+gem "parallel", "< 2.2"
+
 gem "flipbook", github: "rbgfx/flipbook", ref: "48effb09242f912279f02c79ef5e08f3eee669b5"
 gem "glyphic", github: "rbgfx/glyphic", ref: "374d49e53b510d6fe65944cc8ebb9a4aeb2942d2"
 gem "lookalike", github: "rbgfx/lookalike", ref: "7ef5be908476e9421e32406b121eb85ac8238e58"
