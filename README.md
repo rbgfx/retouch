@@ -80,7 +80,7 @@ Text requires a BDF or TrueType font path (font: or RETOUCH_FONT). Without Glyph
 
 Pure Ruby pixel processing trades speed for easy installation. Nearest-neighbor scaling is suitable for pixel art; Lanczos, blur, and arbitrary-angle rotation cost more as image dimensions grow. Retouch does not claim ImageMagick pixel-for-pixel compatibility.
 
-On Ruby 4.0.6 with YJIT, a local run on a solid 1920×1080 image measured bilinear resize to 960×540 at 1.259s, Lanczos3 at 2.282s, Gaussian blur at σ=3 at 13.721s, and brightness at 0.180s. Nearest-neighbor enlargement from 256×256 to 1024×1024 took 0.072s. Treat these as reference measurements, not guarantees; Gaussian blur is currently the slow path.
+On Ruby 4.0.6 with YJIT, a local run on a solid 1920×1080 image measured bilinear resize to 960×540 at 1.236s, Lanczos3 at 2.238s, Gaussian blur at σ=3 at 13.423s, and brightness at 0.184s. Nearest-neighbor enlargement from 256×256 to 1024×1024 took 0.071s. Treat these as reference measurements, not guarantees; Gaussian blur is currently the slow path and exceeds the design target of 3 seconds.
 
 ## API contracts
 
