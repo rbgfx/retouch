@@ -20,6 +20,33 @@ module Retouch
     def self.offset: (Integer container_width, Integer container_height, Integer content_width, Integer content_height, Symbol | String gravity) -> [Integer, Integer]
   end
 
+  module Operations
+    def self.info: (untyped image) -> Hash[Symbol, untyped]
+    def self.grayscale: (untyped image) -> untyped
+    def self.invert: (untyped image) -> untyped
+    def self.brightness: (untyped image, Numeric amount) -> untyped
+    def self.contrast: (untyped image, Numeric factor) -> untyped
+    def self.gamma: (untyped image, Numeric value) -> untyped
+    def self.saturate: (untyped image, Numeric factor) -> untyped
+    def self.tint: (untyped image, String color, ?amount: Numeric) -> untyped
+    def self.opacity: (untyped image, Numeric amount) -> untyped
+    def self.quantize: (untyped image, ?colors: Integer, ?dither: Symbol, ?palette: Array[Array[Integer]]?) -> untyped
+    def self.blur: (untyped image, Numeric sigma) -> untyped
+    def self.sharpen: (untyped image, Numeric sigma, ?amount: Numeric) -> untyped
+    def self.pixelate: (untyped image, Integer size) -> untyped
+    def self.overlay: (untyped image, untyped source, ?x: Integer?, ?y: Integer?, ?gravity: Symbol | String, ?opacity: Numeric, ?mode: Symbol) -> untyped
+    def self.watermark: (untyped image, untyped source, **untyped options) -> untyped
+    def self.text: (untyped image, String text, **untyped options) -> untyped
+    def self.rect: (untyped image, Integer x, Integer y, Integer width, Integer height, ?String color, ?fill: bool) -> untyped
+    def self.arrow: (untyped image, Integer x1, Integer y1, Integer x2, Integer y2, ?String color, ?width: Integer, ?head: Numeric) -> untyped
+    def self.append: (Array[untyped] images, ?direction: Symbol, ?gap: Integer, ?background: untyped) -> untyped
+    def self.montage: (Array[untyped] images, ?columns: Integer?, ?cols: Integer?, ?gap: Integer, ?background: untyped, ?labels: bool | Array[String]?) -> untyped
+    def self.spritesheet: (Array[untyped] images, ?max_width: Integer, ?gap: Integer, ?background: untyped) -> [untyped, Array[Hash[Symbol, Integer]]]
+    def self.diff: (untyped expected, untyped actual, ?threshold: Numeric, ?color: String) -> Hash[Symbol, untyped]
+    def self.animate: (Array[untyped] frames, String path, ?fps: Numeric?, ?delay: Numeric | Array[Numeric]?, ?loop: bool | Integer, ?colors: Integer, ?palette: Symbol | Array[Array[Integer]], ?dither: Symbol) -> String
+    def self.open_gif: (String path, ?frame: Symbol | Integer, ?max_pixels: Integer, ?max_frames: Integer, ?max_total_pixels: Integer) -> untyped
+  end
+
   class Pipeline
     def to_image: -> untyped
     def info: -> Hash[Symbol, untyped]
@@ -34,10 +61,29 @@ module Retouch
     def extend: (Integer width, Integer height, **untyped options) -> Pipeline
     def border: (Integer width, ?String color, **untyped options) -> Pipeline
     def trim: (**untyped options) -> Pipeline
+    def grayscale: -> Pipeline
+    def invert: -> Pipeline
+    def brightness: (Numeric amount) -> Pipeline
+    def contrast: (Numeric factor) -> Pipeline
+    def gamma: (Numeric value) -> Pipeline
+    def saturate: (Numeric factor) -> Pipeline
+    def tint: (String color, **untyped options) -> Pipeline
+    def opacity: (Numeric amount) -> Pipeline
+    def quantize: (**untyped options) -> Pipeline
+    def blur: (Numeric sigma) -> Pipeline
+    def sharpen: (Numeric sigma, **untyped options) -> Pipeline
+    def pixelate: (Integer size) -> Pipeline
+    def overlay: (String | untyped source, **untyped options) -> Pipeline
+    def watermark: (String | untyped source, **untyped options) -> Pipeline
+    def text: (String text, **untyped options) -> Pipeline
+    def rect: (Integer x, Integer y, Integer width, Integer height, ?String color, **untyped options) -> Pipeline
+    def arrow: (Integer x1, Integer y1, Integer x2, Integer y2, ?String color, **untyped options) -> Pipeline
   end
 
   def self.open: (String path) -> Pipeline
   def self.from_image: (untyped image) -> Pipeline
+  def self.open_gif: (String path, ?frame: Symbol | Integer, **untyped limits) -> (Array[untyped] | Pipeline)
+  def self.batch: (String | Array[String] inputs, to: String, ?jobs: Integer, ?force: bool) { (Pipeline) -> Pipeline } -> Array[String]
 
   class CLI
     def self.run: (Array[String] argv, ?out: untyped, ?err: untyped) -> Integer

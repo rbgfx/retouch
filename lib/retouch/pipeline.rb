@@ -2,7 +2,11 @@
 
 module Retouch
   class Pipeline
-    OPERATIONS = %i[resize thumbnail crop flip flop rotate pad extend border trim].freeze
+    OPERATIONS = %i[
+      resize thumbnail crop flip flop rotate pad extend border trim
+      grayscale invert brightness contrast gamma saturate tint opacity quantize
+      blur sharpen pixelate overlay watermark text rect arrow
+    ].freeze
 
     def initialize(image, operations = [])
       raise TypeError, "image must be a Tessel::Image" unless image.is_a?(Tessel::Image)

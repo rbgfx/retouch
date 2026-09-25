@@ -12,7 +12,11 @@ module Retouch
                  "PPM"
                elsif signature.start_with?("BM")
                  "BMP"
+               elsif signature.start_with?("GIF87a", "GIF89a")
+                 "GIF"
                end
+      return with_format(Operations.open_gif(path, frame: 0), format) if format == "GIF"
+
       with_format(Tessel.read(path), format || "unknown")
     rescue Tessel::UnsupportedError => e
       raise Error, "unsupported image format for #{path}: #{e.message}", cause: e

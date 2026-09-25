@@ -7,8 +7,8 @@ Gem::Specification.new do |spec|
   spec.version = Retouch::VERSION
   spec.authors = ["Yudai Takada"]
   spec.email = ["t.yudai92@gmail.com"]
-  spec.summary = "Ruby image resizing and shape tools"
-  spec.description = "A small Ruby image editor and command line tool for resizing and shape operations."
+  spec.summary = "Pure Ruby image editing and batch tools"
+  spec.description = "A small pure Ruby image editor for color, filter, composite, annotation, and batch operations on PNG, PPM, and BMP images."
   spec.homepage = "https://github.com/rbgfx/retouch"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.1.0"

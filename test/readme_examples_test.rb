@@ -9,7 +9,7 @@ class ReadmeExamplesTest < Test::Unit::TestCase
       output = File.join(dir, "small.png")
       Tessel::Image.new(4, 4, fill: "#8090a0").write(input)
 
-      Retouch.open(input).resize("50%").border(1, "#303846").save(output)
+      Retouch.open(input).resize("50%").brightness(8).border(1, "#303846").save(output)
       assert_equal [4, 4], [Tessel.read(output).width, Tessel.read(output).height]
 
       transformed = Retouch.open(input).crop("2x2+1+1").resize("1x1!").to_image
