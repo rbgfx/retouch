@@ -2,6 +2,8 @@
 
 All notable changes to Retouch are recorded here.
 
+No 0.2.0 release was published.
+
 ## [0.3.1] - 2026-09-25
 
 - Use normalized fixed-point weights for resampling with integer interpolation.
