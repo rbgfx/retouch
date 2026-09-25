@@ -183,9 +183,9 @@ module Retouch
     def require_flipbook
       require "flipbook"
       version = Gem::Version.new(Flipbook::VERSION)
-      raise Error, "GIF/APNG support requires flipbook >= 0.3.0 (found #{version})" if version < Gem::Version.new("0.3.0")
+      raise Error, "GIF/APNG support requires flipbook >= 0.4.0 (found #{version})" if version < Gem::Version.new("0.4.0")
     rescue LoadError => e
-      raise Error, "GIF/APNG support requires flipbook >= 0.3.0 (gem install flipbook)", cause: e
+      raise Error, "GIF/APNG support requires flipbook >= 0.4.0 (gem install flipbook)", cause: e
     end
     private_class_method :require_flipbook
   end

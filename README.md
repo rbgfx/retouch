@@ -20,7 +20,7 @@ Install optional integrations only when needed:
 
 ```sh
 gem install glyphic   # text and montage labels
-gem install flipbook -v '>= 0.3.0'  # GIF reading, GIF output, and APNG output
+gem install flipbook -v '>= 0.4.0'  # GIF reading, GIF output, and APNG output
 ```
 
 ## Ruby API
@@ -92,15 +92,11 @@ Global options include `--dry-run`, `--verbose`, `--quiet`, `--strip`, and `--le
 ## Formats and limits
 
 - PNG, PPM, and BMP input and output through Tessel.
-- GIF input and GIF/APNG output through optional Flipbook 0.3.0 or newer. `animate` selects GIF or APNG from the output extension; `--fps` and `--delay` are mutually exclusive, and delay is in seconds.
+- GIF input and GIF/APNG output through optional Flipbook 0.4.0 or newer. `animate` selects GIF or APNG from the output extension; `--fps` and `--delay` are mutually exclusive, and delay is in seconds.
 - Multi-image `diff` compares RGBA channels exactly by default and returns a magenta diff image plus the changed-pixel ratio in the Ruby API.
 - Large photographic images and high-quality arbitrary-angle rotation can be slow in pure Ruby. JPEG, WebP, and color-managed workflows are not supported.
 
 On Ruby 4.0.6 with YJIT, the local benchmark measured a 1920×1080 Gaussian blur at σ=3 in 5.836 seconds, above the 3-second target. Results depend on Ruby and hardware; use `--verbose` to measure your own workload.
-
-### Release order
-
-Release in dependency order: Tessel 0.2.0 → Flipbook 0.3.0 → Retouch 0.2.0/0.3.0. Retouch keeps Flipbook optional, checks for version 0.3.0 when GIF/APNG features are called, and directs users to install that version. No Retouch release is included in this work.
 
 ## Development
 

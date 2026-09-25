@@ -3,13 +3,13 @@
 require_relative "test_helper"
 
 class FlipbookIntegrationTest < Test::Unit::TestCase
-  test "Flipbook 0.3 reads GIF frames and writes GIF and APNG animations" do
+  test "Flipbook 0.4 reads GIF frames and writes GIF and APNG animations" do
     begin
       require "flipbook"
     rescue LoadError
-      omit "optional flipbook >= 0.3.0 is not installed"
+      omit "optional flipbook >= 0.4.0 is not installed"
     end
-    omit "flipbook >= 0.3.0 is required" if Gem::Version.new(Flipbook::VERSION) < Gem::Version.new("0.3.0")
+    omit "flipbook >= 0.4.0 is required" if Gem::Version.new(Flipbook::VERSION) < Gem::Version.new("0.4.0")
 
     Dir.mktmpdir do |dir|
       red = Tessel::Image.new(2, 2, fill: "#ff0000")

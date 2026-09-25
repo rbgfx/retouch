@@ -2,9 +2,10 @@
 
 All notable changes to Retouch are recorded here.
 
-## [0.3.1] - Unreleased
+## [0.3.1] - 2026-09-25
 
 - Use normalized fixed-point weights for resampling with integer interpolation.
+- Require Flipbook 0.4.0 for GIF and APNG integration.
 
 ## [0.3.0] - 2026-09-25
 
