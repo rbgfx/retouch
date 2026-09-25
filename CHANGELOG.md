@@ -2,9 +2,6 @@
 
 All notable changes to Retouch are recorded here.
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-09-25
 
-### Added
-
-- Add PNG, PPM, and BMP image editing through lazy pipelines and a command line.
-- Add geometry-based resizing, cropping, padding, trimming, and rotation.
+Initial release
