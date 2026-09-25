@@ -2,7 +2,11 @@
 
 All notable changes to Retouch are recorded here.
 
-## [0.3.0] - Unreleased
+## [0.3.1] - Unreleased
+
+- Use normalized fixed-point weights for resampling with integer interpolation.
+
+## [0.3.0] - 2026-09-25
 
 - Add color, quantization, convolution, pixelation, compositing, annotation, and multi-image operations.
 - Add glob-based batch transforms, output templates, and process workers.

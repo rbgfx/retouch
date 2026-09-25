@@ -69,6 +69,49 @@ class RetouchTest < Test::Unit::TestCase
     assert_equal [152, 152, 152, 255], downscaled_gradient[1, 0]
   end
 
+  test "resampling uses normalized fixed-point weights and preserves RGBA output" do
+    scale = Retouch::Operations::WEIGHT_SCALE
+    %i[bilinear bicubic lanczos3].each do |filter|
+      [[13, 5], [5, 13]].each do |source, target|
+        weights = Retouch::Operations.send(:axis_weights, source, target, filter)
+        weights.each do |taps|
+          assert_equal scale, taps.sum(&:last)
+          assert(taps.all? { |_, weight| weight.is_a?(Integer) })
+        end
+      end
+    end
+
+    image = Tessel::Image.new(3, 2)
+    [[255, 10, 0, 255], [0, 255, 10, 192], [20, 40, 255, 64],
+     [255, 0, 255, 0], [0, 0, 0, 128], [250, 220, 30, 255]].each_with_index do |pixel, i|
+      image[i % 3, i / 3] = pixel
+    end
+    points = [[0, 0], [1, 1], [2, 1], [3, 2]]
+    reference = {
+      bilinear: [[255, 10, 0, 255], [83, 107, 4, 148], [77, 165, 32, 160], [250, 220, 30, 255]],
+      bicubic: [[255, 1, 0, 255], [75, 122, 1, 149], [68, 172, 30, 162], [255, 244, 29, 255]],
+      lanczos3: [[255, 0, 1, 255], [76, 128, 0, 149], [68, 176, 30, 164], [255, 253, 29, 255]]
+    }
+    reference.each do |filter, expected_pixels|
+      output = Retouch::Operations.resize(image, "4x3!", filter:)
+      actual_pixels = points.map { |x, y| output[x, y] }
+      actual_pixels.zip(expected_pixels).each do |actual, expected|
+        error = actual.zip(expected).map { |value, reference_value| (value - reference_value).abs }.max
+        assert_operator error, :<=, 1, "#{filter} changed RGBA pixel by more than one level"
+      end
+    end
+
+    gradient = Tessel::Image.new(13, 9)
+    9.times do |y|
+      13.times do |x|
+        gradient[x, y] = [((47 * x) + (19 * y) + (13 * x * y)) % 256, ((31 * x) + (83 * y) + (7 * x * y)) % 256,
+                          ((71 * x) + (37 * y) + (17 * x * y)) % 256, ((73 * x) + (101 * y) + (11 * x * y)) % 256]
+      end
+    end
+    lanczos = Retouch::Operations.resize(gradient, "19x14!", filter: :lanczos3)
+    assert_equal [5, 160, 167, 78], lanczos[14, 4]
+  end
+
   test "shape operations preserve orientation, metadata, and padding" do
     image = sample_image
     assert_equal image[0, 0], Retouch::Operations.rotate(image, 90)[1, 0]

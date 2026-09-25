@@ -2,6 +2,8 @@
 
 module Retouch
   module Operations
+    WEIGHT_SCALE = 1 << 20
+
     module_function
 
     def apply(image, name, *arguments, **options)
@@ -152,29 +154,30 @@ module Retouch
       intermediate = String.new(capacity: width * image.height * 4, encoding: Encoding::BINARY)
       image.height.times do |y|
         width.times do |x|
-          sums = [0.0, 0.0, 0.0, 0.0]
+          sums = [0, 0, 0, 0]
           horizontal[x].each do |sx, weight|
             offset = ((y * image.width) + sx) * 4
-            alpha = source.getbyte(offset + 3) / 255.0
+            alpha = source.getbyte(offset + 3)
             sums[0] += source.getbyte(offset) * alpha * weight
             sums[1] += source.getbyte(offset + 1) * alpha * weight
             sums[2] += source.getbyte(offset + 2) * alpha * weight
             sums[3] += source.getbyte(offset + 3) * weight
           end
-          sums.each { |value| intermediate << value.round.clamp(0, 255) }
+          3.times { |channel| intermediate << round_divide(sums[channel], 255 * WEIGHT_SCALE).clamp(0, 255) }
+          intermediate << round_divide(sums[3], WEIGHT_SCALE).clamp(0, 255)
         end
       end
       result = String.new(capacity: width * height * 4, encoding: Encoding::BINARY)
       height.times do |y|
         width.times do |x|
-          sums = [0.0, 0.0, 0.0, 0.0]
+          sums = [0, 0, 0, 0]
           vertical[y].each do |sy, weight|
             offset = ((sy * width) + x) * 4
             4.times { |channel| sums[channel] += intermediate.getbyte(offset + channel) * weight }
           end
-          alpha = sums[3].round.clamp(0, 255)
+          alpha = round_divide(sums[3], WEIGHT_SCALE).clamp(0, 255)
           if alpha.positive?
-            3.times { |channel| result << (sums[channel] * 255 / alpha).round.clamp(0, 255) }
+            3.times { |channel| result << round_divide(sums[channel] * 255, WEIGHT_SCALE * alpha).clamp(0, 255) }
           else
             result << "\0\0\0".b
           end
@@ -202,8 +205,15 @@ module Retouch
           weights[index.clamp(0, source - 1)] += weight
         end
         total = weights.values.sum
-        weights.map { |index, weight| [index, weight / total] }
+        fixed = weights.map { |index, weight| [index, ((weight / total) * WEIGHT_SCALE).round] }
+        largest = fixed.each_index.max_by { |i| fixed[i][1].abs }
+        fixed[largest][1] += WEIGHT_SCALE - fixed.sum { |_, weight| weight }
+        fixed
       end
+    end
+
+    def round_divide(value, divisor)
+      value.negative? ? -((-value + (divisor / 2)) / divisor) : (value + (divisor / 2)) / divisor
     end
 
     def cubic(value)
@@ -259,6 +269,6 @@ module Retouch
       [*(alpha.positive? ? sums.first(3).map { |value| (value * 255 / alpha).round.clamp(0, 255) } : [0, 0, 0]), alpha]
     end
 
-    private_class_method :resample, :axis_weights, :cubic, :lanczos, :copy_metadata, :rotate_quarter, :sample_bilinear
+    private_class_method :resample, :axis_weights, :round_divide, :cubic, :lanczos, :copy_metadata, :rotate_quarter, :sample_bilinear
   end
 end
