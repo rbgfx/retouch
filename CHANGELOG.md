@@ -2,19 +2,16 @@
 
 All notable changes to Retouch are recorded here.
 
-No 0.2.0 release was published.
-
 ## [0.3.1] - 2026-09-25
 
-- Use normalized fixed-point weights for resampling with integer interpolation.
-- Require Flipbook 0.4.0 for GIF and APNG integration.
+- Preserve colors and transparency more consistently when resizing images.
+- Require Flipbook 0.4.0 for GIF and APNG support.
 
 ## [0.3.0] - 2026-09-25
 
 - Add color, quantization, convolution, pixelation, compositing, annotation, and multi-image operations.
 - Add glob-based batch transforms, output templates, and process workers.
 - Add optional Glyphic text and Flipbook 0.3.0+ GIF reading, GIF output, and APNG output integrations.
-- Document current format and GIF Reader limitations.
 
 ## [0.1.0] - 2026-09-25
 
