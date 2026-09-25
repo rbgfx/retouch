@@ -30,28 +30,14 @@ module Retouch
     def flip: -> Pipeline
     def flop: -> Pipeline
     def rotate: (Numeric degrees, **untyped options) -> Pipeline
+    def pad: (Integer amount, **untyped options) -> Pipeline
+    def extend: (Integer width, Integer height, **untyped options) -> Pipeline
     def border: (Integer width, ?String color, **untyped options) -> Pipeline
-    def grayscale: -> Pipeline
-    def invert: -> Pipeline
-    def brightness: (Numeric amount) -> Pipeline
-    def contrast: (Numeric amount) -> Pipeline
-    def gamma: (Numeric amount) -> Pipeline
-    def saturate: (Numeric amount) -> Pipeline
-    def tint: (String color, **untyped options) -> Pipeline
-    def opacity: (Numeric amount) -> Pipeline
-    def blur: (**untyped options) -> Pipeline
-    def sharpen: (**untyped options) -> Pipeline
-    def pixelate: (Integer size) -> Pipeline
-    def overlay: (String | untyped image, **untyped options) -> Pipeline
-    def watermark: (String | untyped image, **untyped options) -> Pipeline
-    def text: (String text, **untyped options) -> Pipeline
-    def rect: (String geometry, **untyped options) -> Pipeline
-    def arrow: (Numeric x1, Numeric y1, Numeric x2, Numeric y2, **untyped options) -> Pipeline
+    def trim: (**untyped options) -> Pipeline
   end
 
-  def self.open: (String path, ?frame: Integer) -> Pipeline
+  def self.open: (String path) -> Pipeline
   def self.from_image: (untyped image) -> Pipeline
-  def self.batch: (String | Array[String] pattern, to: String, ?force: bool, ?jobs: Integer, ?level: Integer, ?strip: bool) { (Pipeline) -> Pipeline } -> Array[String]
 
   class CLI
     def self.run: (Array[String] argv, ?out: untyped, ?err: untyped) -> Integer

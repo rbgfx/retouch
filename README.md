@@ -1,103 +1,56 @@
-<div align="center">
+<h1 align="center">Retouch</h1>
 
-# Retouch
+<p align="center">Resize and reshape images with a small Ruby API and CLI.</p>
 
-Small Ruby image edits, from the terminal or a Ruby pipeline.
+<p align="center">
+  <a href="https://github.com/rbgfx/retouch/actions/workflows/main.yml"><img src="https://github.com/rbgfx/retouch/actions/workflows/main.yml/badge.svg" alt="CI"></a>
+  <a href="https://www.ruby-lang.org/"><img src="https://img.shields.io/badge/ruby-%3E%3D3.1-CC342D?logo=ruby&amp;logoColor=white" alt="Ruby 3.1+"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-750014.svg" alt="MIT license"></a>
+</p>
 
-[![CI](https://github.com/rbgfx/retouch/actions/workflows/main.yml/badge.svg)](https://github.com/rbgfx/retouch/actions/workflows/main.yml)
-[![Gem](https://img.shields.io/gem/v/retouch)](https://rubygems.org/gems/retouch)
-
-</div>
-
-Retouch handles everyday image cleanup without an ImageMagick install. It reads and writes PNG, PPM, and BMP through [Tessel](https://github.com/rbgfx/tessel). GIF input and GIF/APNG output, text rendering, and image diffs are available through optional [Flipbook](https://github.com/rbgfx/flipbook), [Glyphic](https://github.com/rbgfx/glyphic), and [Lookalike](https://github.com/rbgfx/lookalike) gems.
-
-JPEG, WebP, color profiles, and very large photographic workloads are outside the current scope.
+Retouch uses [Tessel](https://github.com/rbgfx/tessel) to read and write PNG, PPM, and BMP images. Its lazy pipelines cover resizing, cropping, rotation, borders, padding, extending, and trimming.
 
 ## Install
 
-~~~sh
-gem install retouch
-~~~
+Until the first RubyGems release, add the repository to your Gemfile:
 
-Install optional integrations only when needed:
+```ruby
+gem "retouch", github: "rbgfx/retouch"
+```
 
-~~~sh
-gem install flipbook glyphic lookalike
-~~~
+## Ruby API
 
-## CLI
-
-~~~sh
-retouch info screenshot.png
-retouch screenshot.png resize 50% border 2 '#303846' -o small.png
-retouch screenshot.png crop 800x600+120+40 text 'v1.2' --at south-east --font ./font.ttf -o crop.png
-retouch sprite.png resize 400% --filter nearest -o sprite@4x.png
-retouch 'shots/*.png' thumbnail 320x -o 'thumbs/{name}.png'
-retouch 'frames/*.png' animate --fps 24 -o animation.gif
-retouch a.png b.png c.png montage --cols 3 --gap 8 -o sheet.png
-retouch diff expected.png actual.png -o diff.png
-~~~
-
-Resize geometry follows familiar ImageMagick-style notation, with intentionally limited semantics:
-
-| Geometry | Result |
-| --- | --- |
-| 800x600 | Fit inside while preserving aspect ratio |
-| 800x600! | Stretch to the exact dimensions |
-| 800x600^ | Scale to cover, then crop |
-| 800x / x600 | Set one dimension and preserve aspect ratio |
-| 50% / 50%x25% | Scale relative to source size |
-| 800x600> | Shrink only |
-| 800x600+10+20 | Dimensions plus crop offset |
-
-Supported resize filters are nearest, bilinear, bicubic, and lanczos3 (default). A crop without offsets starts at the top left; --gravity selects one of nine anchors for crop, cover, overlay, and text.
-
-Use --dry-run, --verbose, --quiet, --force, --strip, --level 0..9, and --jobs N to control batch runs. Batch templates accept {name}, {ext}, {dir}, {index}, and {index:03}. Existing output files are preserved unless --force is used; conflicting templates fail before processing.
-
-## Ruby
-
-~~~ruby
+```ruby
 require "retouch"
 
 Retouch.open("screenshot.png")
-  .resize("50%")
-  .border(2, "#303846")
+  .resize("640x")
+  .border(1, "#303846")
   .save("small.png")
+```
 
-image = Retouch.open("screenshot.png")
-  .crop("800x600+120+40")
-  .grayscale
-  .to_image
+Pipelines defer work until `to_image` or `save` and leave the source image unchanged.
 
-Retouch.batch("shots/*.png", to: "thumbs/{name}.png") do |image|
-  image.thumbnail("320x")
-end
-~~~
+## CLI
 
-Pipelines defer work until to_image or save and never mutate the source image. Available operations are resize/thumbnail/crop, flip/flop/rotate, trim/pad/extend/border, grayscale/invert/brightness/contrast/gamma/saturate/tint/opacity/quantize, blur/sharpen/pixelate, overlay/watermark/text/rect/arrow, and multi-image montage/append/spritesheet/animate/diff.
+```sh
+retouch screenshot.png resize 640x --filter lanczos3 -o small.png
+retouch screenshot.png crop 320x200+40+20 -o crop.png
+retouch screenshot.png rotate 90 -o rotated.png
+retouch info screenshot.png
+```
 
-Text requires a BDF or TrueType font path (font: or RETOUCH_FONT). Without Glyphic, only text reports a missing optional dependency. GIF/APNG and perceptual diff operations similarly report their optional gem when invoked.
+Geometry accepts `WIDTHxHEIGHT`, `WIDTHx`, `xHEIGHT`, percentages, `!` to stretch, `^` to cover, and `>` to shrink only. Crop offsets may be positive or negative. Resize filters are `nearest`, `bilinear`, `bicubic`, and `lanczos3`.
 
-Pure Ruby pixel processing trades speed for easy installation. Nearest-neighbor scaling is suitable for pixel art; Lanczos, blur, and arbitrary-angle rotation cost more as image dimensions grow. Retouch does not claim ImageMagick pixel-for-pixel compatibility.
-
-On Ruby 4.0.6 with YJIT, a local run on a solid 1920×1080 image measured bilinear resize to 960×540 at 1.236s, Lanczos3 at 2.238s, Gaussian blur at σ=3 at 13.423s, and brightness at 0.184s. Nearest-neighbor enlargement from 256×256 to 1024×1024 took 0.071s. Treat these as reference measurements, not guarantees; Gaussian blur is currently the slow path and exceeds the design target of 3 seconds.
-
-## API contracts
-
-Inputs are file paths or Tessel::Image values with RGBA8 pixels. Transformations return a new image and leave the input untouched. Geometry, option, and frame errors raise ArgumentError; values of the wrong type raise TypeError; I/O and unavailable optional integrations raise Retouch::Error. Pipeline#save overwrites its destination, while the CLI and Retouch.batch refuse existing outputs unless --force / force: true is supplied.
-
-Retouch supports PNG, PPM, and BMP input/output. GIF input and GIF/APNG output need Flipbook; text and montage labels need Glyphic and a BDF/TrueType font; diff needs Lookalike. JPEG, WebP, color management, and APNG input are unsupported. Pipelines are safe to reuse from independent calls; Tessel image mutability follows Tessel's contract, and --jobs uses processes where fork exists.
+Outputs are protected from accidental overwrite; use `--force` to replace one. `--dry-run`, `--verbose`, `--quiet`, `--strip`, and `--level 0..9` control a command.
 
 ## Development
 
-~~~sh
+```sh
 bundle install
 bundle exec rake verify
-COVERAGE=1 COVERAGE_MIN=85 bundle exec rake test
-~~~
-
-The verification task runs RuboCop, test-unit, and RBS validation. The README Ruby examples are exercised by the test suite.
+```
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).

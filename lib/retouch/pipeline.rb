@@ -2,11 +2,7 @@
 
 module Retouch
   class Pipeline
-    OPERATIONS = %i[
-      resize thumbnail crop flip flop rotate pad extend border trim grayscale invert
-      brightness contrast gamma saturate tint opacity quantize blur sharpen pixelate
-      overlay watermark text rect arrow
-    ].freeze
+    OPERATIONS = %i[resize thumbnail crop flip flop rotate pad extend border trim].freeze
 
     def initialize(image, operations = [])
       raise TypeError, "image must be a Tessel::Image" unless image.is_a?(Tessel::Image)
@@ -18,7 +14,6 @@ module Retouch
     def to_image
       @operations.reduce(@source.dup) do |image, (name, args, options)|
         args = args.dup
-        args[0] = ImageIO.read(args[0]) if %i[overlay watermark].include?(name) && args[0].is_a?(String)
         Operations.apply(image, name, *args, **options)
       end
     end
