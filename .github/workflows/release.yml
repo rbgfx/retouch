@@ -60,7 +60,7 @@ jobs:
           test "$RELEASE_TAG" = "v$version"
       - name: Test and build
         run: |
-          bundle exec rake
+          bundle exec rake test types
           gemspec="$(find . -maxdepth 1 -name '*.gemspec' -print -quit)"
           gem build --strict "$gemspec" --output "$RUNNER_TEMP/package.gem"
       - name: Publish through RubyGems trusted publishing
