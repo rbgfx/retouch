@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111315">
+<meta name="description" content="A small Ruby image editor for PNG, PPM, and BMP.">
+<title>Retouch — image work in Ruby</title>
+<style>
+:root{color-scheme:dark;--bg:#111315;--panel:#1a1d20;--line:#2c3034;--text:#f1f1ec;--muted:#a2a7a9;--accent:#79d9c5;--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% -20%,#1d3934,transparent 44%),var(--bg);color:var(--text);font:16px/1.65 var(--sans)}a{color:inherit;text-decoration:none}a:hover{color:var(--accent)}.wrap{width:min(1040px,calc(100% - 40px));margin:auto}.nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{font-size:20px;font-weight:750;letter-spacing:-.04em}.brand span,.label{color:var(--accent)}.links{display:flex;gap:24px;color:var(--muted);font-size:14px}.hero{padding:88px 0 70px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:50px}.label{font:12px var(--mono);letter-spacing:.14em;text-transform:uppercase}h1{font-size:clamp(48px,7vw,78px);line-height:.99;letter-spacing:-.075em;margin:19px 0}.hero p{font-size:18px;color:var(--muted)}.actions{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0 22px}.button{padding:10px 16px;border:1px solid var(--line);border-radius:5px;font-weight:650}.primary{background:var(--accent);border-color:var(--accent);color:#10211d}.install{font:14px var(--mono);background:#090b0c;border:1px solid var(--line);padding:12px 15px;border-radius:6px;display:inline-flex;gap:16px}.install span{color:#737a7b}.art{aspect-ratio:1;border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,#202825,#141719);padding:28px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;transform:rotate(2deg)}.tile{border:1px solid #36433f;border-radius:7px;background:linear-gradient(145deg,#87dbc5,#36594f);position:relative;overflow:hidden}.tile:nth-child(2){background:linear-gradient(145deg,#e0a577,#704d39)}.tile:nth-child(3){background:linear-gradient(145deg,#6d92c7,#354764)}.tile:nth-child(4){background:linear-gradient(145deg,#d8d49c,#6e7150)}.tile:after{content:"";position:absolute;width:80%;height:80%;border:1px solid #ffffff70;inset:10%;border-radius:50%}.tile:nth-child(even):after{border-radius:2px;transform:rotate(24deg)}.section{border-top:1px solid var(--line);padding:42px 0 66px}.section h2{font-size:28px;letter-spacing:-.04em;margin:8px 0 10px}.section>p{max-width:650px;color:var(--muted)}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:25px}.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:19px}.card strong{display:block;margin-bottom:7px}.card p{color:var(--muted);font-size:14px;margin:0}.code{border:1px solid var(--line);background:#090b0c;border-radius:7px;padding:18px;overflow:auto;font:14px/1.8 var(--mono);color:#d3eee5}.foot{border-top:1px solid var(--line);padding:24px 0 36px;display:flex;justify-content:space-between;gap:16px;color:var(--muted);font-size:13px}
+@media(max-width:740px){.hero{grid-template-columns:1fr;gap:30px;padding:66px 0 54px}.art{max-width:400px}.links{gap:14px}.cards{grid-template-columns:1fr}.foot{flex-direction:column}}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="nav" aria-label="Main navigation"><a class="brand" href="#top">re<span>touch</span></a><div class="links"><a href="#pipeline">Pipeline</a><a href="https://github.com/rbgfx/retouch">GitHub</a><a href="https://rubygems.org/gems/retouch">RubyGems</a></div></nav>
+<main id="top">
+<section class="hero"><div><div class="label">Image tools for Ruby</div><h1>Small edits.<br>Clean pipeline.</h1><p>Resize, crop, annotate, and compose PNG-centered images from Ruby or the command line. Retouch is pure Ruby and built on Tessel.</p><div class="actions"><a class="button primary" href="https://github.com/rbgfx/retouch#ruby-api">Read the guide ↗</a><a class="button" href="https://github.com/rbgfx/retouch#cli">Explore the CLI</a></div><div class="install"><span>$</span> gem install retouch</div></div><div class="art" aria-hidden="true"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div></section>
+<section class="section" id="pipeline"><div class="label">Lazy, composable operations</div><h2>Keep image steps readable</h2><p>Build a pipeline with chainable transformations. Processing starts only when you render or save the result.</p><pre class="code"><code>require "retouch"
+
+Retouch.open("screenshot.png")
+  .resize("640x")
+  .brightness(8)
+  .border(1, "#303846")
+  .save("small.png")</code></pre><div class="cards"><article class="card"><strong>Ruby API</strong><p>Compose resizing, color adjustments, drawing, overlays, and image comparisons.</p></article><article class="card"><strong>Practical CLI</strong><p>Process globs in batches, create montages, and automate image checks in CI.</p></article><article class="card"><strong>Focused formats</strong><p>PNG, PPM, and BMP through Tessel, with optional GIF and APNG through Flipbook.</p></article></div></section>
+</main><footer class="foot"><span>Retouch · Image work in Ruby</span><span><a href="https://github.com/rbgfx/retouch">Source</a> · MIT License</span></footer>
+</div></body>
+</html>
