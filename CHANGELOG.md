@@ -2,6 +2,10 @@
 
 All notable changes to Retouch are recorded here.
 
+## [0.3.2] - 2026-09-26
+
+- Reject batch outputs that resolve to the same file through symlinks or hard links.
+
 ## [0.3.1] - 2026-09-25
 
 - Preserve colors and transparency more consistently when resizing images.
