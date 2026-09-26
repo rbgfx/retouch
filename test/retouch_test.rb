@@ -328,6 +328,26 @@ class RetouchTest < Test::Unit::TestCase
     end
   end
 
+  test "batch rejects output paths that alias through symlinked directories" do
+    Dir.mktmpdir do |directory|
+      first_dir = File.join(directory, "first")
+      second_dir = File.join(directory, "second")
+      FileUtils.mkdir_p(File.join(first_dir, "out"))
+      FileUtils.mkdir_p(second_dir)
+      File.symlink(File.join(first_dir, "out"), File.join(second_dir, "out"))
+      inputs = [first_dir, second_dir].map do |dir|
+        path = File.join(dir, "image.png")
+        sample_image.write(path)
+        path
+      end
+
+      assert_raise(Retouch::Error) do
+        Retouch.batch(inputs, to: "{dir}/out/{name}.png", jobs: 2, &:grayscale)
+      end
+      assert_false File.exist?(File.join(first_dir, "out", "image.png"))
+    end
+  end
+
   test "CLI supports color operations, multi-image output, and batch templates" do
     Dir.mktmpdir do |dir|
       first = File.join(dir, "one.png")

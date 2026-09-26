@@ -29,7 +29,8 @@ module Retouch
       raise Error, "input file does not exist: #{paths.find { |path| !File.file?(path) }}" unless paths.all? { |path| File.file?(path) }
 
       outputs = paths.each_with_index.map { |path, index| output_path(to, path, index) }
-      raise Error, "output template produces duplicate paths" unless outputs.uniq.length == outputs.length
+      resolved_outputs = outputs.map { |path| resolved_path(path) }
+      raise Error, "output template produces duplicate paths" unless resolved_outputs.uniq.length == outputs.length
 
       jobs = Integer(jobs)
       raise ArgumentError, "jobs must be positive" unless jobs.positive?
@@ -67,6 +68,17 @@ module Retouch
 
       outputs
     end
+
+    def self.resolved_path(path)
+      ancestor = File.expand_path(path)
+      suffix = []
+      until File.exist?(ancestor) || File.symlink?(ancestor)
+        suffix.unshift(File.basename(ancestor))
+        ancestor = File.dirname(ancestor)
+      end
+      File.join(File.realpath(ancestor), *suffix)
+    end
+    private_class_method :resolved_path
   end
 
   def self.batch(inputs, to:, jobs: 1, force: false, &block)
