@@ -29,7 +29,7 @@ module Retouch
       raise Error, "input file does not exist: #{paths.find { |path| !File.file?(path) }}" unless paths.all? { |path| File.file?(path) }
 
       outputs = paths.each_with_index.map { |path, index| output_path(to, path, index) }
-      resolved_outputs = outputs.map { |path| resolved_path(path) }
+      resolved_outputs = outputs.map { |path| destination_key(path) }
       raise Error, "output template produces duplicate paths" unless resolved_outputs.uniq.length == outputs.length
 
       jobs = Integer(jobs)
@@ -69,16 +69,20 @@ module Retouch
       outputs
     end
 
-    def self.resolved_path(path)
+    def self.destination_key(path)
       ancestor = File.expand_path(path)
       suffix = []
       until File.exist?(ancestor) || File.symlink?(ancestor)
         suffix.unshift(File.basename(ancestor))
         ancestor = File.dirname(ancestor)
       end
-      File.join(File.realpath(ancestor), *suffix)
+      resolved = File.join(File.realpath(ancestor), *suffix)
+      return resolved unless File.file?(resolved)
+
+      stat = File.stat(resolved)
+      [stat.dev, stat.ino]
     end
-    private_class_method :resolved_path
+    private_class_method :destination_key
   end
 
   def self.batch(inputs, to:, jobs: 1, force: false, &block)

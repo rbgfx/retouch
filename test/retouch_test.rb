@@ -348,6 +348,26 @@ class RetouchTest < Test::Unit::TestCase
     end
   end
 
+  test "batch rejects existing outputs that are hard links to one file" do
+    Dir.mktmpdir do |directory|
+      inputs = %w[first second].map do |name|
+        input_dir = File.join(directory, name)
+        FileUtils.mkdir_p(File.join(input_dir, "out"))
+        path = File.join(input_dir, "image.png")
+        sample_image.write(path)
+        path
+      end
+      first_output = File.join(directory, "first", "out", "image.png")
+      second_output = File.join(directory, "second", "out", "image.png")
+      sample_image.write(first_output)
+      File.link(first_output, second_output)
+
+      assert_raise(Retouch::Error) do
+        Retouch::Batch.run(inputs, to: "{dir}/out/{name}.png", force: true, dry_run: true)
+      end
+    end
+  end
+
   test "CLI supports color operations, multi-image output, and batch templates" do
     Dir.mktmpdir do |dir|
       first = File.join(dir, "one.png")
